@@ -28,8 +28,8 @@ class Product(BaseModel):
     product_img: str
 
 class Order(BaseModel):
-    order_id: str = Field(default_factory=lambda: 'O_' + str(randint(1000000000, 9999999999)))
-    user_id: str = Field(default_factory=lambda: 'U_' + str(randint(100000, 999999)))
+    #order_id: str = Field(default_factory=lambda: 'O_' + str(randint(1000000000, 9999999999)))
+    #user_id: str = Field(default_factory=lambda: 'U_' + str(randint(100000, 999999)))
     product_details: List[Product]
     status: str = 'placed'
     order_date_time: datetime = Field(default_factory=datetime.now)
@@ -49,9 +49,16 @@ async def create_order(order: Order, file: UploadFile = File(...)):
     order.product_details[0].product_img = img_path
 
     # Validate order_id and user_id
-    assert len(order.order_id) == 10, 'Order ID must be 10 digits long.'
-    assert len(order.user_id) == 6, 'User ID must be 6 digits long.'
+   # assert len(order.order_id) == 10, 'Order ID must be 10 digits long.'
+    #assert len(order.user_id) == 6, 'User ID must be 6 digits long.'
+    # Validate order_id and user_id
+    order_id: str = Field(default_factory=lambda: 'O_' + str(randint(1000000000, 9999999999)))
+    user_id: str = Field(default_factory=lambda: 'U_' + str(randint(100000, 999999)))
+    assert len(order_id) == 10, 'Order ID must be 10 digits long.'
+    assert len(user_id) == 6, 'User ID must be 6 digits long.'
     
+    order.order_id = order_id
+    order.user_id = user_id
     # Save order to MongoDB
     orders.insert_one(order.dict(by_alias=True))
     
